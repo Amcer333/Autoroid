@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Admin Panel</h1>
+        <button onclick="logout()">Abmelden</button>
+    </header>
+
+    <main>
+        <h2>Benutzerverwaltung</h2>
+        <input type="text" id="new-username" placeholder="Benutzername">
+        <input type="password" id="new-password" placeholder="Passwort">
+        <select id="new-role">
+            <option value="user">User</option>
+            <option value="editor">Editor</option>
+            <option value="admin">Admin</option>
+        </select>
+        <button onclick="createUser()">Benutzer erstellen</button>
+
+        <h2>Auktionen verwalten</h2>
+        <input type="number" id="car-id" placeholder="Auto ID">
+        <button onclick="startAuction()">Auktion starten</button>
+        <button onclick="endAuction()">Auktion beenden</button>
+    </main>
+
+    <script src="admin.js"></script>
+</body>
+</html>
