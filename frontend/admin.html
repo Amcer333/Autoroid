@@ -2,31 +2,57 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Admin Panel</h1>
-        <button onclick="logout()">Abmelden</button>
-    </header>
+    <h1>Admin Dashboard</h1>
+    <button onclick="logout()">Abmelden</button>
 
-    <main>
-        <h2>Benutzerverwaltung</h2>
-        <input type="text" id="new-username" placeholder="Benutzername">
-        <input type="password" id="new-password" placeholder="Passwort">
-        <select id="new-role">
-            <option value="user">User</option>
-            <option value="editor">Editor</option>
-            <option value="admin">Admin</option>
-        </select>
-        <button onclick="createUser()">Benutzer erstellen</button>
+    <h2>Benutzerverwaltung</h2>
+    <div style="display: flex; gap: 20px;">
+        <div>
+            <input type="text" id="new-username" placeholder="Benutzername">
+            <input type="password" id="new-password" placeholder="Passwort">
+            <select id="new-role">
+                <option value="user">User</option>
+                <option value="editor">Editor</option>
+                <option value="admin">Admin</option>
+            </select>
+            <button onclick="createUser()">Benutzer erstellen</button>
+        </div>
+        <div>
+            <select id="delete-user-list"></select>
+            <button onclick="deleteUser()" style="background-color: red; color: white;">Benutzer löschen</button>
+        </div>
+    </div>
 
-        <h2>Auktionen verwalten</h2>
-        <input type="number" id="car-id" placeholder="Auto ID">
-        <button onclick="startAuction()">Auktion starten</button>
-        <button onclick="endAuction()">Auktion beenden</button>
-    </main>
+    <h2>Auktionen verwalten</h2>
+    <select id="auction-dropdown" onchange="showAuctionDetails()"></select>
+    
+    <div id="auction-details-box" style="display: none; border: 1px solid #ddd; padding: 15px; margin-top: 10px;">
+        <h3 id="auction-name"></h3>
+        <p><strong>Status:</strong> <span id="auction-status"></span></p>
+        <p><strong>Countdown:</strong> <span id="auction-countdown"></span></p>
+        <p><strong>Bild:</strong></p>
+        <img id="auction-image" src="" width="200">
+        <br><br>
+        <button onclick="deleteAuction()" style="background-color: red; color: white;">Auktion löschen</button>
+        <button onclick="showModifyForm()">Auktion bearbeiten</button>
+    </div>
+
+    <h2>Auktion planen</h2>
+    <select id="schedule-auction-dropdown"></select>
+    <label>Startzeit:</label>
+    <input type="datetime-local" id="schedule-start-time">
+    <label>Dauer:</label>
+    <input type="number" id="schedule-duration">
+    <select id="schedule-time-unit">
+        <option value="days">Tage</option>
+        <option value="hours">Stunden</option>
+    </select>
+    <button onclick="scheduleAuction()">Auktion planen</button>
 
     <script src="admin.js"></script>
 </body>

@@ -1,115 +1,88 @@
 document.addEventListener("DOMContentLoaded", () => {
     checkAdminAccess();
+    fetchUsers();
+    fetchAuctions();
 });
 
+// ✅ Ensure User is Admin
 function checkAdminAccess() {
     const token = localStorage.getItem("authToken");
-    console.log("Stored authToken (user ID):", token);
-
     if (!token) {
+        console.error("No token found! Redirecting to login.");
         alert("Zugriff verweigert! Bitte zuerst anmelden.");
         window.location.href = "login.html";
-        return;
     }
+}
 
-    fetch("http://localhost:5000/api/auth/check-role", {
-        method: "POST",
+// ✅ Fetch Users for Dropdown
+function fetchUsers() {
+    const token = localStorage.getItem("authToken");
+    console.log("Fetching users with token:", token);
+
+    fetch("http://localhost:5000/api/admin/users", {
+        method: "GET",
         headers: { 
-            "Content-Type": "application/json", 
-            Authorization: `Bearer ${token}` 
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
         },
     })
     .then(response => response.json())
-    .then(data => {
-        console.log("Admin check received role:", data.role);
+    .then(users => {
+        console.log("Users fetched:", users);
+        const userDropdown = document.getElementById("delete-user-list");
 
-        if (data.role !== "admin") {
-            alert("Zugriff verweigert! Nur Admins können diese Seite aufrufen.");
-            window.location.href = "index.html";
-        }
+        userDropdown.innerHTML = "";
+
+        users.forEach(user => {
+            const option = document.createElement("option");
+            option.value = user.id;
+            option.textContent = user.username;
+            userDropdown.appendChild(option);
+        });
+
+        console.log("User dropdown populated successfully.");
     })
     .catch(error => {
-        console.error("Fehler bei der Überprüfung des Admin-Status:", error);
-        alert("Fehler beim Überprüfen der Admin-Berechtigung.");
-        window.location.href = "index.html";
+        console.error("Error fetching users:", error);
     });
 }
 
-// ✅ Create a new user (Admin only)
-function createUser() {
-    const username = document.getElementById("new-username").value;
-    const password = document.getElementById("new-password").value;
-    const role = document.getElementById("new-role").value;
+// ✅ Fetch Auctions for Dropdown
+function fetchAuctions() {
     const token = localStorage.getItem("authToken");
+    console.log("Fetching auctions with token:", token);
 
-    fetch("http://localhost:5000/api/admin/create-user", {
-        method: "POST",
+    fetch("http://localhost:5000/api/admin/auctions", {
+        method: "GET",
         headers: { 
-            "Content-Type": "application/json", 
-            Authorization: `Bearer ${token}` 
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ username, password, role }),
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Zugriff verweigert! Nur Admins dürfen Benutzer erstellen.");
-        }
-        return response.json();
-    })
-    .then(data => alert(data.message))
-    .catch(error => console.error("Fehler beim Erstellen des Benutzers:", error));
-}
+    .then(response => response.json())
+    .then(auctions => {
+        console.log("Auctions fetched:", auctions);
+        const auctionDropdown = document.getElementById("auction-dropdown");
+        const scheduleDropdown = document.getElementById("schedule-auction-dropdown");
 
-// ✅ Start an auction (Admin only)
-function startAuction() {
-    const carId = document.getElementById("car-id").value;
-    const token = localStorage.getItem("authToken");
+        auctionDropdown.innerHTML = "";
+        scheduleDropdown.innerHTML = "";
 
-    fetch("http://localhost:5000/api/admin/start-auction", {
-        method: "POST",
-        headers: { 
-            "Content-Type": "application/json", 
-            Authorization: `Bearer ${token}` 
-        },
-        body: JSON.stringify({ car_id: carId }),
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Zugriff verweigert! Nur Admins dürfen Auktionen starten.");
-        }
-        return response.json();
-    })
-    .then(data => alert(data.message))
-    .catch(error => console.error("Fehler beim Starten der Auktion:", error));
-}
+        auctions.forEach(auction => {
+            const option = document.createElement("option");
+            option.value = auction.id;
+            option.textContent = auction.name;
+            auctionDropdown.appendChild(option);
 
-// ✅ End an auction (Admin only)
-function endAuction() {
-    const carId = document.getElementById("car-id").value;
-    const token = localStorage.getItem("authToken");
+            const scheduleOption = document.createElement("option");
+            scheduleOption.value = auction.id;
+            scheduleOption.textContent = auction.name;
+            scheduleDropdown.appendChild(scheduleOption);
+        });
 
-    fetch("http://localhost:5000/api/admin/end-auction", {
-        method: "POST",
-        headers: { 
-            "Content-Type": "application/json", 
-            Authorization: `Bearer ${token}` 
-        },
-        body: JSON.stringify({ car_id: carId }),
+        console.log("Auction dropdowns populated successfully.");
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Zugriff verweigert! Nur Admins dürfen Auktionen beenden.");
-        }
-        return response.json();
-    })
-    .then(data => alert(data.message))
-    .catch(error => console.error("Fehler beim Beenden der Auktion:", error));
-}
-
-// ✅ Logout function
-function logout() {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userRole");
-    alert("Erfolgreich abgemeldet.");
-    window.location.href = "login.html";
+    .catch(error => {
+        console.error("Error fetching auctions:", error);
+    });
 }
