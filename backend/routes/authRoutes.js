@@ -73,6 +73,8 @@ router.post("/login", (req, res) => {
 router.post("/check-role", (req, res) => {
     const userId = req.headers.authorization?.split(" ")[1];
 
+    console.log("Received token for role check:", userId); // Debugging
+
     if (!userId) {
         console.error("Access denied: No token provided.");
         return res.status(403).json({ message: "Access denied. No token provided." });
@@ -89,6 +91,7 @@ router.post("/check-role", (req, res) => {
         res.json({ role: user.role });
     });
 });
+
 
 // ✅ Change Password (User Must Be Logged In)
 router.post("/change-password", (req, res) => {
